@@ -1,0 +1,71 @@
+{
+  "path": "cz-emoji",
+  "config": {
+    "cz-emoji": {
+      "subjectMaxLength": 72,
+      "skipQuestions": ["scope"],
+      "types": [
+        {
+          "name": "feat",
+          "code": "feat: :+1:",
+          "emoji": "👍",
+          "description": "Feature     (実装)"
+        },
+        {
+          "name": "fix",
+          "code": "fix: :bug:",
+          "emoji": "🐛",
+          "description": "Fix         (修復)"
+        },
+        {
+          "name": "wip",
+          "code": "wip: :construction:",
+          "emoji": "🚧",
+          "description": "WIP         (工事)"
+        },
+        {
+          "name": "chore",
+          "code": "chore: :paperclip:",
+          "emoji": "📎",
+          "description": "Chore       (雑務)"
+        },
+        {
+          "name": "style",
+          "code": "style: :sparkles:",
+          "emoji": "✨",
+          "description": "Style       (美観)"
+        },
+        {
+          "name": "docs",
+          "code": "docs: :notebook:",
+          "emoji": "📓",
+          "description": "Documents   (文書)"
+        },
+        {
+          "name": "perf",
+          "code": "perf: :zap:",
+          "emoji": "⚡",
+          "description": "Performance (改善)"
+        },
+        {
+          "name": "refactor",
+          "code": "refactor: :bulb:",
+          "emoji": "💡",
+          "description": "Refactoring (改築)"
+        },
+        {
+          "name": "test",
+          "code": "test: :100:",
+          "emoji": "💯",
+          "description": "Test        (試験)"
+        },
+        {
+          "name": "release",
+          "code": "release :tada:",
+          "emoji": "🎉",
+          "description": "Release     (公開)"
+        }
+      ]
+    }
+  }
+}
