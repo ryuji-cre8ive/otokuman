@@ -18,5 +18,5 @@ func main () {
 }
 
 func hello (c echo.Context) error {
-	return c.String(http.StatusOK, "hello World")
+	return c.String(http.StatusOK, "hello World!!")
 }
