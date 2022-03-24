@@ -116,13 +116,7 @@ func loadEnv () []byte {
 		println("Error marshalling")
 	} 
 
-	// println(param)
-
-	// var d DB_Config
-	// if err := json.Unmarshal(param, &d); err != nil {
-	// 	println(err)
-	// }
-	// println(d.Port)
+	
 	return param	
 }
 
