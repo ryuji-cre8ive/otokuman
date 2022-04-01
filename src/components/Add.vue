@@ -33,8 +33,12 @@ export default defineComponent({
 
 <template>
   <div>
+    <h1>新規登録ページ</h1>
     <input type="text" name="name" v-model="name">
     <input type="text" name="password" v-model="password">
     <button @click="addUser">Add User</button>
+  </div>
+  <div>
+    <h1>新規登録はこちらから</h1>
   </div>
 </template>

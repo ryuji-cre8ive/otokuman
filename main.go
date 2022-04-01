@@ -7,17 +7,31 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	"os"
+	"fmt"
 	// "strconv"
 	"encoding/json"
   _ "github.com/lib/pq"
-	
+	"github.com/google/uuid"
 
 )
 
 type User struct {
-	Id int 
+	Id string 
 	Name string `json:"name"`
 	Password string `json:"password"`
+}
+
+type Users struct {
+	Id string 
+	Name string `gorm:"" json:"name"`
+	Password string `gorm:"" json:"password"`
+}
+
+type SpecificUser struct {
+	Id string 
+	Name string `json:"name"`
+	Password string `json:"password"`
+	Flag bool `json:"isCorrectUser"`
 }
 
 type DB_Config struct {
@@ -28,24 +42,23 @@ type DB_Config struct {
 }
 
 func main () {
-	db, err := sqlConnect()
-  if err != nil {
-    panic(err.Error())
-  } else {
-    println("DB接続成功")
-  }
+  // if err != nil {
+  //   panic(err.Error())
+  // } else {
+  //   println("DB接続成功")
+  // }
 
-	error := db.Create(&User {
-		Id: 2,
-		Name: "testman",
-		Password: "test",
-	}).Error
+	// error := db.Create(&User {
+	// 	Id: 2,
+	// 	Name: "testman",
+	// 	Password: "test",
+	// }).Error
 
-	if error != nil {
-		println(error)
-	} else {
-		println("success to add")
-	}
+	// if error != nil {
+	// 	println(error)
+	// } else {
+	// 	println("success to add")
+	// }
 
 	e := echo.New()
 
@@ -55,6 +68,7 @@ func main () {
 
 	e.GET("/hello", hello)
 	e.POST("/adduser", addUser)
+	e.POST("/login", login)
 
 	e.Logger.Fatal(e.Start(":1234"))
 }
@@ -80,15 +94,74 @@ func sqlConnect () (database *gorm.DB, err error) {
 	return gorm.Open(DBMS, dsn)
 }
 
+func login (c echo.Context) error {
+	db, err := sqlConnect()
+	if err != nil {
+		println(err)
+	}
+
+	var user Users
+
+	param := new(User)
+	if err := c.Bind(param); err != nil {
+		println(err)
+	}
+	isCorrectUser := false
+	name := param.Name
+	password := param.Password
+	println("name: " + name + "password: " + password)
+
+	db.First(&user, "name = ?", name)
+	if name == user.Name && password == user.Password {
+		isCorrectUser = true
+	}
+
+	// params, err := json.Marshal(SpecificUser{
+	// 	Id: id,
+	// 	Name: user.Name,
+	// 	Password: password,
+	// 	Flag: isCorrectUser,
+	// })
+
+	paramsAfterLogin := SpecificUser{
+		Id: user.Id,
+		Name: user.Name,
+		Password: password,
+		Flag: isCorrectUser,
+	}
+	fmt.Println(paramsAfterLogin)
+
+	return c.JSON(http.StatusOK, paramsAfterLogin)
+}
+
 func addUser (c echo.Context) error {
 	param := new(User)
 	if err := c.Bind(param); err != nil {
 		return err
 	}
+	db, err := sqlConnect()
+	if err != nil {
+		println(err)
+	}
 
 	name := param.Name
 	password := param.Password
-	println("name: " + name + "password: " + password)
+	fmt.Println("name: " + name + "password: " + password)
+	uuidObj, _ := uuid.NewUUID()
+
+	error := db.Create(&User {
+		Id: uuidObj.String(),
+		Name: name,
+		Password: password,
+	}).Error
+
+	if error != nil {
+		println(error)
+	} else {
+		println("success to add")
+	}
+	
+	
 	return c.JSON(http.StatusOK, param)
 }
 
@@ -103,8 +176,6 @@ func loadEnv () []byte {
 	dbname := os.Getenv("DB_NAME")
 	port := os.Getenv("DB_PORT")
 
-	
-
 	param, err := json.Marshal(DB_Config{
 		User: user,
 		Password: password,
@@ -115,8 +186,6 @@ func loadEnv () []byte {
 	if err != nil {
 		println("Error marshalling")
 	} 
-
-	
 	return param	
 }
 

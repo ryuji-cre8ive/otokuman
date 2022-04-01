@@ -3,6 +3,7 @@ module ryuji-cre8ive/otokuman
 go 1.17
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo v3.3.10+incompatible

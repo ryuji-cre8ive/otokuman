@@ -5,6 +5,11 @@
     <p>GET: <br/>{{consequence}} </p>
     <button @click="deleteConsequence">結果削除</button>
   </div>
+
+  <div>
+    <h1>Loginに</h1>
+    <router-link to="login">Loginに行く</router-link>
+  </div>
 </template>
 
 <script lang="ts">
