@@ -12,7 +12,8 @@
     "axios": "^0.26.1",
     "commitizen": "^4.2.4",
     "git-cz": "^4.8.0",
-    "vue": "^3.2.25"
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
