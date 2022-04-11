@@ -3,6 +3,7 @@ import { createRouter,createWebHistory } from 'vue-router';
 import Hello from './components/HelloWorld.vue'
 import Login from './components/Login.vue'
 import Add from './components/Add.vue'
+import Mypage from './components/Mypage.vue'
 import Home from './components/Home.vue'
 
 const routes = [
@@ -22,7 +23,12 @@ const routes = [
       component: Add
     },
     {
-      path: '/home/:id',
+      path: '/mypage/:id',
+      name: 'mypage',
+      component: Mypage
+    },
+    {
+      path: '/home',
       name: 'home',
       component: Home
     }

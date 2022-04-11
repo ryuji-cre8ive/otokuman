@@ -2,9 +2,12 @@
 import { defineComponent, ref } from 'vue'
 import axios from "axios"
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from '@/store/index'
+
 
 export default defineComponent({
   setup() {
+    const store = useStore()
     const name= ref("")
     const password = ref("")
     const router = useRouter()
@@ -15,6 +18,10 @@ export default defineComponent({
       password: string
     }
 
+    interface afterLoginUser extends User {
+      Id: string,
+    }
+
     const addUser = () => {
       const obj:User = {
         name: name.value,
@@ -22,8 +29,10 @@ export default defineComponent({
       }
       axios.post("/login", obj).then(res => {
         if ( res.data.isCorrectUser ) {
-          console.log(res.data)
-          router.push(`/home/${res.data.Id}`)
+          const myprofile:afterLoginUser = res.data
+          console.log(myprofile)
+          console.log(store.dispatch('login', myprofile))
+          router.push(`/mypage/${myprofile.Id}`)
         }
       })
     }
