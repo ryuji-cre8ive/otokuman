@@ -22,7 +22,7 @@ export default defineComponent({
       Id: string,
     }
 
-    const addUser = () => {
+    const login = () => {
       const obj:User = {
         name: name.value,
         password: password.value
@@ -30,9 +30,10 @@ export default defineComponent({
       axios.post("/login", obj).then(res => {
         if ( res.data.isCorrectUser ) {
           const myprofile:afterLoginUser = res.data
-          console.log(myprofile)
-          console.log(store.dispatch('login', myprofile))
+          store.dispatch('login', myprofile)
           router.push(`/mypage/${myprofile.Id}`)
+        } else {
+          return alert(res.data.message)
         }
       })
     }
@@ -40,7 +41,7 @@ export default defineComponent({
     return { 
       name,
       password,
-      addUser
+      login
     }
   },
 })
@@ -51,7 +52,7 @@ export default defineComponent({
     <h1>ログインページ</h1>
     <input type="text" name="name" v-model="name">
     <input type="text" name="password" v-model="password">
-    <button @click="addUser">ログインする</button>
+    <button @click="login">ログインする</button>
   </div>
   <div>
     <h1>新規登録はこちらから</h1>
