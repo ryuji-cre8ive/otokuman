@@ -12,7 +12,8 @@ import (
 	"encoding/json"
   _ "github.com/lib/pq"
 	"github.com/google/uuid"
-
+	"crypto/sha256"
+	"encoding/hex"
 )
 
 type User struct {
@@ -39,6 +40,11 @@ type DB_Config struct {
 	Password string `json:"password"`
 	DBName string `json:"db_name"`
 	Port string `json:"port"`
+}
+
+type responseParams struct{
+	StatusCode int `json:"statusCode"`
+	Message string `json:"message"`
 }
 
 func main () {
@@ -109,19 +115,22 @@ func login (c echo.Context) error {
 	isCorrectUser := false
 	name := param.Name
 	password := param.Password
-	println("name: " + name + "password: " + password)
+	println("name: " + name + " password: " + password)
 
 	db.First(&user, "name = ?", name)
-	if name == user.Name && password == user.Password {
-		isCorrectUser = true
-	}
 
-	// params, err := json.Marshal(SpecificUser{
-	// 	Id: id,
-	// 	Name: user.Name,
-	// 	Password: password,
-	// 	Flag: isCorrectUser,
-	// })
+	//ハッシュ関数にかけて保存してあるパスワードと一致させるためにハッシュ関数にかける
+	encryptedPassword := encryption(password)
+
+	if name == user.Name {
+		if encryptedPassword != user.Password {
+			res := makeResponse(401, "password is wrong but user is exist")
+			return c.JSON(http.StatusOK, res)
+		} else {
+			isCorrectUser = true
+		}
+		
+	}
 
 	paramsAfterLogin := SpecificUser{
 		Id: user.Id,
@@ -133,6 +142,8 @@ func login (c echo.Context) error {
 
 	return c.JSON(http.StatusOK, paramsAfterLogin)
 }
+
+
 
 func addUser (c echo.Context) error {
 	param := new(User)
@@ -146,14 +157,27 @@ func addUser (c echo.Context) error {
 
 	name := param.Name
 	password := param.Password
-	fmt.Println("name: " + name + "password: " + password)
+	fmt.Println("name: " + name + " password: " + password)
+
+	
+	//ユーザーが既に存在したときの処理
+	var user Users
+	db.First(&user, "name = ?", name)
+	if user.Name != "" {
+		res := makeResponse(401, "user is already added")
+		return c.JSON(http.StatusOK, res)
+	}
+
 	uuidObj, _ := uuid.NewUUID()
+
+	encryptedPassword := encryption(password)
 
 	error := db.Create(&User {
 		Id: uuidObj.String(),
 		Name: name,
-		Password: password,
+		Password: encryptedPassword,
 	}).Error
+	fmt.Println("encrypted", encryptedPassword)
 
 	if error != nil {
 		println(error)
@@ -189,3 +213,19 @@ func loadEnv () []byte {
 	return param	
 }
 
+
+
+func encryption (word string) string {
+	b := []byte(word)
+	sha256 := sha256.Sum256(b)
+	hashed := hex.EncodeToString(sha256[:])
+	return hashed
+}
+
+func makeResponse(code int, message string) responseParams {
+	response := responseParams{
+		StatusCode: code,
+		Message: message,
+	}
+	return response
+}

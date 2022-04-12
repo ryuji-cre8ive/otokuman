@@ -8,5 +8,5 @@ export default defineComponent({
 })
 </script>
 <template>
-  <h1>this is home {{ $route.params.id}}</h1>
+  <h1>this is home page which is posted a lot of articles about otoku</h1>
 </template>

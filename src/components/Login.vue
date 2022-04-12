@@ -2,9 +2,12 @@
 import { defineComponent, ref } from 'vue'
 import axios from "axios"
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from '@/store/index'
+
 
 export default defineComponent({
   setup() {
+    const store = useStore()
     const name= ref("")
     const password = ref("")
     const router = useRouter()
@@ -15,15 +18,22 @@ export default defineComponent({
       password: string
     }
 
-    const addUser = () => {
+    interface afterLoginUser extends User {
+      Id: string,
+    }
+
+    const login = () => {
       const obj:User = {
         name: name.value,
         password: password.value
       }
       axios.post("/login", obj).then(res => {
         if ( res.data.isCorrectUser ) {
-          console.log(res.data)
-          router.push(`/home/${res.data.Id}`)
+          const myprofile:afterLoginUser = res.data
+          store.dispatch('login', myprofile)
+          router.push(`/mypage/${myprofile.Id}`)
+        } else {
+          return alert(res.data.message)
         }
       })
     }
@@ -31,7 +41,7 @@ export default defineComponent({
     return { 
       name,
       password,
-      addUser
+      login
     }
   },
 })
@@ -42,7 +52,7 @@ export default defineComponent({
     <h1>ログインページ</h1>
     <input type="text" name="name" v-model="name">
     <input type="text" name="password" v-model="password">
-    <button @click="addUser">ログインする</button>
+    <button @click="login">ログインする</button>
   </div>
   <div>
     <h1>新規登録はこちらから</h1>

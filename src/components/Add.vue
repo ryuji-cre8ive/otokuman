@@ -12,13 +12,20 @@ export default defineComponent({
       password: string
     }
 
-    const addUser = () => {
+    const addUser = async () => {
       const obj:User = {
         name: name.value,
         password: password.value
       }
-      axios.post("/adduser", obj).then(res => {
-        console.log(res)
+      await axios.post("/adduser", obj).then((res) => {
+        console.log("res",res)    
+        console.log("res.data",res.data)
+        if ( res.data.statusCode === 401 ) {
+          return alert(res.data.message)
+        }
+        if ( res.data.statusCode === 200) {
+          return alert(res.data.message)
+        }
       })
     }
 
@@ -33,12 +40,13 @@ export default defineComponent({
 
 <template>
   <div>
+    <!-- <h1 v-if=""></h1> -->
+  </div>
+  <div>
     <h1>新規登録ページ</h1>
     <input type="text" name="name" v-model="name">
     <input type="text" name="password" v-model="password">
     <button @click="addUser">Add User</button>
   </div>
-  <div>
-    <h1>新規登録はこちらから</h1>
-  </div>
+  
 </template>
