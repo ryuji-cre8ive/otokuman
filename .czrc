@@ -64,6 +64,12 @@
           "code": "release :tada:",
           "emoji": "🎉",
           "description": "Release     (公開)"
+        },
+        {
+          "name": "deploy",
+          "code": "deploy :rocket:",
+          "emoji": "🚀",
+          "description": "deploy"
         }
       ]
     }

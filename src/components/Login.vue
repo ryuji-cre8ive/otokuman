@@ -27,7 +27,7 @@ export default defineComponent({
         name: name.value,
         password: password.value
       }
-      axios.post("/login", obj).then(res => {
+      axios.post("/api/login", obj).then(res => {
         if ( res.data.isCorrectUser ) {
           const myprofile:afterLoginUser = res.data
           store.dispatch('login', myprofile)

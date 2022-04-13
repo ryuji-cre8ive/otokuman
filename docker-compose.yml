@@ -4,12 +4,13 @@ services:
     container_name: api_echo
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/golang/Dockerfile
     volumes:
       - .:/app
     tty:  true
     depends_on:
       - postgres
+      - node
     networks:
       - default
     ports:
@@ -20,6 +21,21 @@ services:
       DB_NAME: postgres
       DB_PORT: 5432
       DB_HOST: postgres
+
+  node:
+    container_name: front
+    build:
+      context: .
+      dockerfile: ./docker/node/Dockerfile
+    volumes:
+      - .:/app
+    tty:  true
+    networks:
+      - default
+    ports:
+      - 3000:3000
+    command: sh -c "npm rebuild esbuild && yarn dev"
+
 
   postgres:
     container_name: postgres
