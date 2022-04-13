@@ -12,8 +12,16 @@ export default defineComponent({
 })
 </script>
 <template>
-  <p>this is my profile</p>
-  <p>Id: {{myInfo.id}}</p>
-  <p>name: {{myInfo.name}}</p>
-  <p>password: {{myInfo.password}}</p>
+  <div>
+    <p>this is my profile</p>
+    <p>Id: {{myInfo.id}}</p>
+    <p>name: {{myInfo.name}}</p>
+    <p>password: {{myInfo.password}}</p>
+  </div>
+  <div>
+    <h1>ホームに行く</h1>
+    <router-link to='/home'>ホームに行く</router-link>
+  </div>
+
+  
 </template>

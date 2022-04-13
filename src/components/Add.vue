@@ -17,7 +17,7 @@ export default defineComponent({
         name: name.value,
         password: password.value
       }
-      await axios.post("/adduser", obj).then((res) => {
+      await axios.post("/api/adduser", obj).then((res) => {
         console.log("res",res)    
         console.log("res.data",res.data)
         if ( res.data.statusCode === 401 ) {
