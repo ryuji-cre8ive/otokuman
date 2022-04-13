@@ -40,6 +40,7 @@ type DB_Config struct {
 	Password string `json:"password"`
 	DBName string `json:"db_name"`
 	Port string `json:"port"`
+	DBHost string `json:"db_host"`
 }
 
 type responseParams struct{
@@ -48,23 +49,7 @@ type responseParams struct{
 }
 
 func main () {
-  // if err != nil {
-  //   panic(err.Error())
-  // } else {
-  //   println("DB接続成功")
-  // }
-
-	// error := db.Create(&User {
-	// 	Id: 2,
-	// 	Name: "testman",
-	// 	Password: "test",
-	// }).Error
-
-	// if error != nil {
-	// 	println(error)
-	// } else {
-	// 	println("success to add")
-	// }
+  
 
 	e := echo.New()
 
@@ -94,9 +79,10 @@ func sqlConnect () (database *gorm.DB, err error) {
 	DBPassword := d.Password
 	DBPort := d.Port
 	DBName := d.DBName
+	DBHost := d.DBHost
 
 	
-	dsn := "host=localhost user=" + DBUser + " password=" + DBPassword + " dbname=" + DBName + " port=" + DBPort + " sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "host=" + DBHost + "user=" + DBUser + " password=" + DBPassword + " dbname=" + DBName + " port=" + DBPort + " sslmode=disable TimeZone=Asia/Shanghai"
 	return gorm.Open(DBMS, dsn)
 }
 
@@ -199,12 +185,14 @@ func loadEnv () []byte {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 	port := os.Getenv("DB_PORT")
+	dbhost := os.Getenv("DB_HOST")
 
 	param, err := json.Marshal(DB_Config{
 		User: user,
 		Password: password,
 		DBName: dbname,
 		Port: port,
+		DBHost: dbhost,
 	})
 
 	if err != nil {
