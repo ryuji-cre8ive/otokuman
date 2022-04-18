@@ -28,13 +28,11 @@ export default defineComponent({
         password: password.value
       }
       axios.post("/api/login", obj).then(res => {
-        if ( res.data.isCorrectUser ) {
-          const myprofile:afterLoginUser = res.data
-          store.dispatch('login', myprofile)
-          router.push(`/mypage/${myprofile.Id}`)
-        } else {
-          return alert(res.data.message)
-        }
+        const myprofile:afterLoginUser = res.data
+        store.dispatch('login', myprofile)
+        router.push(`/mypage/${myprofile.Id}`)
+      }).catch(err => {
+        alert(err)
       })
     }
 

@@ -9,5 +9,6 @@ ADD package.json ./
 
 COPY . .
 
+RUN yarn cache clean
 RUN yarn install --production=false
 # RUN yarn global add @vue/cli@4.5.15

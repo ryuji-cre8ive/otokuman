@@ -15,6 +15,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"net/url"
+	"time"
 )
 
 type User struct {
@@ -27,13 +28,13 @@ type Users struct {
 	Id string 
 	Name string `gorm:"" json:"name"`
 	Password string `gorm:"" json:"password"`
+	Session string
 }
 
 type SpecificUser struct {
 	Id string 
 	Name string `json:"name"`
 	Password string `json:"password"`
-	Flag bool `json:"isCorrectUser"`
 }
 
 type DB_Config struct {
@@ -47,6 +48,15 @@ type DB_Config struct {
 type responseParams struct{
 	StatusCode int `json:"statusCode"`
 	Message string `json:"message"`
+}
+
+type Articles struct {
+	Id string `gorm:"" json:"id"`
+	Title string `gorm:"" json:"title"`
+	Content string `gorm:"" json:"content"`
+	Genre string `gorm:"" json:"genre"`
+	CreatedAt string `gorm:"" json:"createdAt"`
+	CreateUser Users `gorm:"foreignkey:Id" json:"createUser"`
 }
 
 func main () {
@@ -72,11 +82,14 @@ func main () {
 	api.GET("/hello", hello)
 	api.POST("/adduser", addUser)
 	api.POST("/login", login)
+	api.POST("/addArticle", addArticle)
 
 	g := e.Group("/")
 	g.Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
 
 	e.Logger.Fatal(e.Start(":1234"))
+
+	
 }
 
 func hello (c echo.Context) error {
@@ -99,6 +112,7 @@ func sqlConnect () (database *gorm.DB, err error) {
 	
 	
 	dsn := "host=" + DBHost + " user=" + DBUser + " password=" + DBPassword + " dbname=" + DBName + " port=" + DBPort + " sslmode=disable TimeZone=Asia/Shanghai"
+	fmt.Println(dsn)
 
 	return gorm.Open(DBMS, dsn)
 }
@@ -115,7 +129,7 @@ func login (c echo.Context) error {
 	if err := c.Bind(param); err != nil {
 		println(err)
 	}
-	isCorrectUser := false
+	
 	name := param.Name
 	password := param.Password
 	println("name: " + name + " password: " + password)
@@ -128,18 +142,24 @@ func login (c echo.Context) error {
 	if name == user.Name {
 		if encryptedPassword != user.Password {
 			res := makeResponse(401, "password is wrong but user is exist")
-			return c.JSON(http.StatusOK, res)
-		} else {
-			isCorrectUser = true
+			return c.JSON(401, res)
 		}
-		
 	}
+	session, _ := uuid.NewUUID()
+
+	cookie := new(http.Cookie)
+  cookie.Name = "session"
+  cookie.Value = session.String()
+  cookie.Expires = time.Now().Add(72 * time.Hour)
+  c.SetCookie(cookie)
+
+	user.Session = session.String()
+	db.Save(&user)
 
 	paramsAfterLogin := SpecificUser{
 		Id: user.Id,
 		Name: user.Name,
 		Password: password,
-		Flag: isCorrectUser,
 	}
 	fmt.Println(paramsAfterLogin)
 
@@ -185,7 +205,7 @@ func addUser (c echo.Context) error {
 	if error != nil {
 		println(error)
 	} else {
-		println("success to add")
+		println("success to add user")
 	}
 	
 	
@@ -227,10 +247,56 @@ func encryption (word string) string {
 	return hashed
 }
 
-func makeResponse(code int, message string) responseParams {
+func makeResponse (code int, message string) responseParams {
 	response := responseParams{
 		StatusCode: code,
 		Message: message,
 	}
 	return response
 }
+
+func addArticle (c echo.Context) error {
+	db, err := sqlConnect()
+	if err != nil {
+		println(err)
+	}
+
+	param := new(Articles)
+	if err := c.Bind(param); err != nil {
+		println(err)
+	}
+	uuidObj, _ := uuid.NewUUID()
+	title := param.Title
+	content := param.Content
+	genre := param.Genre
+	createUser := param.CreateUser
+	
+	createdAt := getDate()
+	fmt.Println("createUser: ")
+	fmt.Println(createUser)
+
+	error := db.Create(&Articles {
+		Id: uuidObj.String(),
+		Title: title,
+		Content: content,
+		Genre: genre,
+		CreatedAt: createdAt,
+		CreateUser: createUser,
+	}).Error
+
+	if error != nil {
+		println(error)
+	} else {
+		println("success to add article")
+	}
+
+	res := makeResponse(200, "your article is successfuly added")
+	
+	return c.JSON(http.StatusOK, res)
+}
+
+func getDate () string{
+	jst, _ := time.LoadLocation("Asia/Tokyo")
+	return time.Now().In(jst).Format("2006-01-02-15:04:05")
+}
+
