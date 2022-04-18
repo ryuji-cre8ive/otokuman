@@ -44,3 +44,7 @@ export const store = createStore<User>({
 export function useStore() {
   return baseUseStore(key)
 }
+type GlobalStateType = ReturnType<typeof useStore>
+export const GlobalStateKey: InjectionKey<GlobalStateType> = Symbol(
+  'GlobalState'
+)

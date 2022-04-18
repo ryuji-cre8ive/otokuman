@@ -1,8 +1,23 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
+import axios from 'axios'
+import { useStore } from '@/store/index'
 
 export default defineComponent({
   setup() {
+
+    const store = useStore()
+
+    interface Article {
+      title: string
+      content: string
+      genre: string
+      createUser: string
+    }
+
+    const title = ref("")
+    const content = ref("")
+    const genre = ref("")
     const otokuList = [
       {
         title: 'マックのお得',
@@ -17,8 +32,27 @@ export default defineComponent({
         content: 'ローソンのお得な情報を発信しています'
       },
     ]
+    const myInfo = computed(() => store.state)
+    
 
-    return { otokuList}
+
+    const makeArticle = () => {
+
+      const article:Article = {
+        title: title.value,
+        content: content.value,
+        genre: genre.value,
+        createUser: myInfo.value.id
+      }
+
+      
+      axios.post('/api/addArticle', article).then(res => {
+
+        alert(res.data)
+      })
+    }
+
+    return { otokuList, makeArticle, title, content, genre}
   },
 })
 </script>
@@ -30,4 +64,15 @@ export default defineComponent({
       <p>{{o.content}}</p>
     </li>
   </ul>
+
+  <h1>make articles</h1>
+  <input type="text" name="title" placeholder="title" v-model="title">
+  <textarea name="content" v-model="content"></textarea>
+  <select name="genre" v-model="genre">
+    <option value="">選択してください</option>
+    <option value="セブンイレブン">セブンイレブン</option>
+    <option value="ローソン">ローソン</option>
+    <option value="ファミリーマート">ファミリーマート</option>
+  </select>
+  <button @click="makeArticle">submit</button>
 </template>

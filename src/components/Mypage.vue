@@ -5,8 +5,10 @@ import { useStore } from '@/store/index'
 export default defineComponent({
   setup() {
     const store = useStore()
-    return { 
-      myInfo: computed(() => store.state)
+    const myInfo = computed(() => store.state)
+    console.log(myInfo.value.id)
+    return {
+      myInfo
     }
   },
 })
