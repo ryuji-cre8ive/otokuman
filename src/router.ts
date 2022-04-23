@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import axios from 'axios'
 import { createRouter,createWebHistory } from 'vue-router';
 import Hello from './components/HelloWorld.vue'
 import Login from './components/Login.vue'
@@ -25,7 +26,15 @@ const routes = [
     {
       path: '/mypage/:id',
       name: 'mypage',
-      component: Mypage
+      component: Mypage,
+      // redirect: to => {
+      //   axios.get('/api/checkCookie').then(() => {
+      //     return
+      //   }).catch(() => { 
+      //     return { path: '/login', query: { q: to.params.id } }
+      //   })
+        
+      // }
     },
     {
       path: '/home',
