@@ -28,6 +28,7 @@ func main () {
 	// e.Static("/", "dist/")
 	e.Use(middleware.Logger())
   e.Use(middleware.Recover())
+	
 	// e.Group("", middleware.Proxy(NoBalancer(url1)))
 	g := e.Group("/")
 	g.Use(middleware.Proxy(middleware.NewRoundRobinBalancer(targets)))
