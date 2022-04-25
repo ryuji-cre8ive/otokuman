@@ -6,33 +6,24 @@ import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   setup() {
+    const router = useRouter()
     const store = useStore()
     let isSetCookie = ref(false)
 
     interface Article {
-      title: string
-      content: string
-      genre: string
-      createUser: string
+      title: string,
+      content: string,
+      genre: string,
+      createUser: string,
     }
-
+    interface ArticleFromDB extends Article{
+      id: string,
+      createdAt: string,
+    }
     const title = ref("")
     const content = ref("")
     const genre = ref("")
-    const otokuList = [
-      {
-        title: 'マックのお得',
-        content: 'マックのお得な情報を発信しています'
-      },
-      {
-        title: 'セブンのお得',
-        content: 'セブンのお得な情報を発信しています'
-      },
-      {
-        title: 'ローソンのお得',
-        content: 'ローソンのお得な情報を発信しています'
-      },
-    ]
+    let otokuList = ref<ArticleFromDB[]>([]);
     const myInfo = computed(() => store.state)
 
     onMounted(() => {
@@ -41,6 +32,16 @@ export default defineComponent({
       }).catch((err) => {
         console.log(isSetCookie)
         console.error(err)
+      })
+
+      if (myInfo.value.id == '') {
+        store.dispatch('loginWithCookie')
+      }
+
+      axios.get('api/getArticles').then((res) => {
+        otokuList.value = res.data.Value
+      }).catch((err) => {
+        alert(err)
       })
     })
 
@@ -56,8 +57,8 @@ export default defineComponent({
 
 
       axios.post('/api/addArticle', article).then(res => {
-
-        alert(res.data)
+        alert(res.data.message)
+        location.reload()
       })
     }
 
@@ -69,7 +70,7 @@ export default defineComponent({
   <div v-if="isSetCookie">
     <h1>this is home page which is posted a lot of articles about otoku</h1>
     <ul>
-      <li v-for="o in otokuList" :key="o.title">
+      <li v-for="o in otokuList" :key="o.id">
         <p>{{o.title}}</p>
         <p>{{o.content}}</p>
       </li>

@@ -9,6 +9,21 @@ import (
 	"net/http"
 )
 
+func GetArticles (c echo.Context) error {
+	db, err := SqlConnect()
+	if err != nil {
+		println(err)
+	}
+
+	articles := []types.Articles{}
+
+	results := db.Find(&articles)
+	fmt.Println("result")
+	fmt.Println(results)
+
+	return c.JSON(http.StatusOK, results)
+}
+
 func AddArticle (c echo.Context) error {
 	db, err := SqlConnect()
 	if err != nil {
@@ -19,15 +34,15 @@ func AddArticle (c echo.Context) error {
 	if err := c.Bind(param); err != nil {
 		println(err)
 	}
+
+	userData := GetUserDataWithCookie(c)
 	uuidObj, _ := uuid.NewUUID()
 	title := param.Title
 	content := param.Content
 	genre := param.Genre
-	createUser := param.CreateUser
+	fmt.Println(userData.Id)
 	
 	createdAt := plugins.GetDate()
-	fmt.Println("createUser: ")
-	fmt.Println(createUser)
 
 	error := db.Create(&types.Articles {
 		Id: uuidObj.String(),
@@ -35,7 +50,7 @@ func AddArticle (c echo.Context) error {
 		Content: content,
 		Genre: genre,
 		CreatedAt: createdAt,
-		CreateUser: createUser,
+		CreateUser: userData.Id,
 	}).Error
 
 	if error != nil {

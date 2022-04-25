@@ -111,7 +111,7 @@ func AddUser (c echo.Context) error {
 	return c.JSON(http.StatusOK, param)
 }
 
-func GetUserDataWithCookie (c echo.Context) error {
+func GetUserDataWithCookieHandler (c echo.Context) error {
 	db, err := SqlConnect()
 	if err != nil {
 		println(err)
@@ -143,4 +143,37 @@ func GetUserDataWithCookie (c echo.Context) error {
 	}
 	Println(paramsAfterLoginWithCookie)
 	return c.JSON(http.StatusOK, paramsAfterLoginWithCookie)
+}
+
+func GetUserDataWithCookie(c echo.Context) (types.Users) {
+	db, err := SqlConnect()
+	if err != nil {
+		println(err)
+	}
+
+	cookie, err := c.Cookie("session")
+	if err != nil {
+		panic(err)
+	}
+
+
+	var user Users
+
+	session := cookie.Value
+
+	db.Where(&user, "session = ?", session).First(&user)
+	gotSessionFromDB := user.Session
+
+	if gotSessionFromDB != session {
+		Println("gotDBSession: " + gotSessionFromDB)
+		Println("session: " + session)
+	}
+
+	paramsAfterLoginWithCookie := types.Users{
+		Id: user.Id,
+		Name: user.Name,
+		Password: user.Password,
+	}
+
+	return paramsAfterLoginWithCookie
 }
