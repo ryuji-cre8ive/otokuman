@@ -4,6 +4,7 @@ type User struct {
 	Id string 
 	Name string `json:"name"`
 	Password string `json:"password"`
+	Session string
 }
 
 type Users struct {

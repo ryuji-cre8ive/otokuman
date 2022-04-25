@@ -23,13 +23,12 @@ func CheckCookieForRouter ( c echo.Context ) error {
 	cookie, err := c.Cookie("session")
 		if err != nil {
 			return err
-		}
-		Println("cookieName "+cookie.Name)
-		Println("cookieValue "+cookie.Value)
+	}
+	Println("cookieName "+cookie.Name)
+	Println("cookieValue "+cookie.Value)
 
-		if len(cookie.Value) > 0 {
-			return c.String(200, "Cookie is already set")
-		}
-
+	if len(cookie.Value) > 0 {
+		return c.String(200, "Cookie is already set")
+	}
 	return c.String(401, "Cookie does not set")
 }

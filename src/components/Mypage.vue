@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref} from 'vue'
+import { defineComponent, computed, onMounted, ref, watchEffect } from 'vue'
 import { useStore } from '@/store/index'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
@@ -20,6 +20,10 @@ export default defineComponent({
       }).catch((err) => {
         return
       })
+
+      if (myInfo.value.id == "") {
+        store.dispatch('loginWithCookie')
+      }
     })
 
     const goHome = () => {

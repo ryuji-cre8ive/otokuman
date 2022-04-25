@@ -110,3 +110,37 @@ func AddUser (c echo.Context) error {
 	
 	return c.JSON(http.StatusOK, param)
 }
+
+func GetUserDataWithCookie (c echo.Context) error {
+	db, err := SqlConnect()
+	if err != nil {
+		println(err)
+	}
+
+	cookie, err := c.Cookie("session")
+	if err != nil {
+		return err
+	}
+
+
+	var user Users
+
+	session := cookie.Value
+
+	db.Where(&user, "session = ?", session).First(&user)
+	gotSessionFromDB := user.Session
+
+	if gotSessionFromDB != session {
+		Println("gotDBSession: " + gotSessionFromDB)
+		Println("session: " + session)
+		return c.String(401, "your cookie is already exipired...")
+	}
+
+	paramsAfterLoginWithCookie := types.SpecificUser{
+		Id: user.Id,
+		Name: user.Name,
+		Password: user.Password,
+	}
+	Println(paramsAfterLoginWithCookie)
+	return c.JSON(http.StatusOK, paramsAfterLoginWithCookie)
+}
