@@ -16,7 +16,8 @@ func Init() *echo.Echo {
 	api.POST("/adduser", con.AddUser)
 	api.POST("/login", con.Login)
 	api.POST("/addArticle", con.AddArticle, midd.ReadCookieMiddleware)
-	api.GET("/getUserDataWithCookie", con.GetUserDataWithCookie)
+	api.GET("/getUserDataWithCookie", con.GetUserDataWithCookieHandler)
+	api.GET("/getArticles", con.GetArticles)
 
 	return e
 }

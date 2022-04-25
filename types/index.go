@@ -34,5 +34,5 @@ type Articles struct {
 	Content string `gorm:"" json:"content"`
 	Genre string `gorm:"" json:"genre"`
 	CreatedAt string `gorm:"" json:"createdAt"`
-	CreateUser Users `gorm:"foreignkey:Id" json:"createUser"`
+	CreateUser string `gorm:"foreignkey:Id" json:"createUser"`
 }
