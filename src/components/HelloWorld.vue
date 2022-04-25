@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="text-center sm:text-left">
     <button @click="sendReqToBack">結果を見る</button>
     <h1>結果確認</h1>
     <p>GET: <br/>{{consequence}} </p>
-    <button @click="deleteConsequence">結果削除</button>
+    <button @click="deleteConsequence" class="bg-indigo-700 font-semibold text-white py-2 px-4 rounded">結果削除</button>
   </div>
 
   <div>
