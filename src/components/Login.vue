@@ -36,24 +36,53 @@ export default defineComponent({
       })
     }
 
+    const showPassword = ref(false)
+
     return { 
       name,
       password,
-      login
+      login,
+      showPassword
     }
   },
 })
 </script>
 
 <template>
-  <div>
-    <h1>ログインページ</h1>
-    <input type="text" name="name" v-model="name">
-    <input type="text" name="password" v-model="password">
-    <button @click="login">ログインする</button>
-  </div>
-  <div>
-    <h1>新規登録はこちらから</h1>
-    <router-link to='/add'>新規登録のページにいく</router-link>
-  </div>
+    
+    <v-main class="ma-5">
+      <v-card width="600"  class="ma-auto">
+        <v-card-title class="pt-10">
+          <h1 class="display-1">ログイン</h1>
+        </v-card-title>
+        <v-card-text>
+          <v-form class="pt-7">
+            <v-text-field label="メールアドレス" prepend-icon="mdi-account-circle" v-model="name" />
+            <v-text-field :type="showPassword ? 'text' : 'password'" label="パスワード" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" v-model="password" @click:append="showPassword = !showPassword" />
+            
+          </v-form>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="success" @click="login">ログイン</v-btn>
+        </v-card-actions>
+      </v-card>
+
+
+      <div align="center">
+        <v-row >
+          <v-col>
+             <router-link to="/forgotMail">メールアドレスをお忘れの方へ</router-link>
+          </v-col>
+         
+        </v-row>
+        <v-row>
+          <v-col>
+            <router-link to="/forgotPassword">パスワードをお忘れの方へ</router-link>
+          </v-col>
+          
+        </v-row>
+        
+      </div>
+    </v-main>
 </template>

@@ -1,14 +1,16 @@
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue'
+import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue'
 import axios from 'axios'
 import { useStore } from '@/store/index'
 import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   setup() {
+    const route = useRoute()
     const router = useRouter()
     const store = useStore()
     let isSetCookie = ref(false)
+    
 
     interface Article {
       title: string,
@@ -20,11 +22,11 @@ export default defineComponent({
       id: string,
       createdAt: string,
     }
-    const title = ref("")
-    const content = ref("")
-    const genre = ref("")
+    
     let otokuList = ref<ArticleFromDB[]>([]);
     const myInfo = computed(() => store.state)
+    let dialog = ref(false)
+    let currentArticle = ref<Article>()
 
     onMounted(() => {
       axios.get('/api/checkCookie').then(() => {
@@ -45,47 +47,105 @@ export default defineComponent({
       })
     })
 
+    
 
-    const makeArticle = () => {
+    // const makeArticle = () => {
 
-      const article:Article = {
-        title: title.value,
-        content: content.value,
-        genre: genre.value,
-        createUser: myInfo.value.id
-      }
+    //   const article:Article = {
+    //     title: title.value,
+    //     content: content.value,
+    //     genre: genre.value,
+    //     createUser: myInfo.value.id
+    //   }
 
 
-      axios.post('/api/addArticle', article).then(res => {
-        alert(res.data.message)
-        location.reload()
-      })
+    //   axios.post('/api/addArticle', article).then(res => {
+    //     alert(res.data.message)
+    //     location.reload()
+    //   })
+    // }
+
+    const onClickMore = (article: Article) => {
+      currentArticle.value = article
+      dialog.value = true
     }
 
-    return { otokuList, makeArticle, title, content, genre, isSetCookie}
+    return { 
+      otokuList,
+      // makeArticle,
+      // title,
+      // content,
+      // genre,
+      isSetCookie,
+      dialog,
+      onClickMore,
+      currentArticle
+    }
   },
 })
 </script>
 <template>
+<v-app>
   <div v-if="isSetCookie">
-    <h1>this is home page which is posted a lot of articles about otoku</h1>
-    <ul>
-      <li v-for="o in otokuList" :key="o.id">
-        <p>{{o.title}}</p>
-        <p>{{o.content}}</p>
-      </li>
-    </ul>
+    <div align=center class="pt-10">
+      <h2>お得な情報一覧</h2>
+      <v-row dense class="pt-10">
+        <v-col
+          v-for="list in otokuList"
+          :key="list.id"
+          class="mx-auto my-5"
+          cols="4"
+        >
+          <v-card
+            class="mx-auto"
+            max-width="344"
+          >
+            <v-card-text>
+              
+              <p class="text-h4 text--primary">
+                {{list.title}}
+              </p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                variant="text"
+                color="teal-accent-4"
+                @click.stop="onClickMore(list)"
+              >
+                Learn More
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-dialog 
+        v-model="dialog"
+        v-if="currentArticle"
+      >
+        <v-card max-width="800" min-width="500" class="pa-5">
+          <v-card-title>{{currentArticle.title}}</v-card-title>
+          <v-card-text>
+            <v-row>
+              {{currentArticle.content}}
+            </v-row>
+            
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="dialog = false" color="error">
+              Close
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-spacer></v-spacer>
+            <v-chip>
+              {{currentArticle.createdAt}}
+              <v-icon>mdi-calendar-month</v-icon>
+            </v-chip>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
 
-    <h1>make articles</h1>
-    <input type="text" name="title" placeholder="title" v-model="title">
-    <textarea name="content" v-model="content"></textarea>
-    <select name="genre" v-model="genre">
-      <option value="">選択してください</option>
-      <option value="セブンイレブン">セブンイレブン</option>
-      <option value="ローソン">ローソン</option>
-      <option value="ファミリーマート">ファミリーマート</option>
-    </select>
-    <button @click="makeArticle">submit</button>
+    
   </div>
 
   <div v-else>
@@ -93,5 +153,16 @@ export default defineComponent({
     <p>Please make sure you logged in</p>
     <router-link to="/login">ログインする</router-link>
   </div>
+</v-app>
+  
   
 </template>
+
+<style>
+.v-card--reveal {
+  bottom: 0;
+  opacity: 1 !important;
+  position: absolute;
+  width: 100%;
+}
+</style>
