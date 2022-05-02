@@ -106,14 +106,13 @@ export default defineComponent({
     color="yellow"
     dense
     app
-    class="px-16"
   >
     <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
       <v-toolbar-title color="white" class="pl-4">OTOKU-MAN</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <div class="px-10">
+      <div class="px-10 d-sm-flex">
         <v-btn @click="goHome" v-if="myInfo.id == ''">
           <v-icon>mdi-home</v-icon>
           <p>home</p>
@@ -125,12 +124,12 @@ export default defineComponent({
         </v-btn>
 
 
-        <v-btn @click="goAbout">
+        <v-btn @click="goAbout" class="d-none d-sm-flex">
           <v-icon>mdi-check-bold</v-icon>
           <p>about</p>
         </v-btn>
 
-        <v-btn @click="goNews">
+        <v-btn @click="goNews" class="d-none d-sm-flex">
           <v-icon>mdi-comment-text</v-icon>
           <p>news</p>
         </v-btn>
@@ -155,16 +154,16 @@ export default defineComponent({
           </v-btn>
         <v-dialog v-if="dialog" v-model="dialog" persistent max-width="600px">
           
-          <v-card width="600px">
+          <v-card max-width="600px">
             <v-container>
               <v-row jsutify="space-around">
-                <v-col cols="5">
+                <v-col cols="12" sm="5">
                   <v-card-title>Write new article</v-card-title>
                 </v-col>
                 <v-col>
                   <v-spacer></v-spacer>
                 </v-col>
-                <v-col cols="3" sm="3" md="3" class="ma-2">
+                <v-col cols="12" sm="3" class="ma-2">
                     <v-menu offset-y>
                       <template v-slot:activator="{ props }">
                         <v-btn v-bind="props">

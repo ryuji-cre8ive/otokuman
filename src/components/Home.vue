@@ -94,7 +94,8 @@ export default defineComponent({
           v-for="list in otokuList"
           :key="list.id"
           class="mx-auto my-5"
-          cols="4"
+          cols="12"
+          sm="4"
         >
           <v-card
             class="mx-auto"
@@ -121,8 +122,9 @@ export default defineComponent({
       <v-dialog 
         v-model="dialog"
         v-if="currentArticle"
+        max-width="600px"
       >
-        <v-card max-width="800" min-width="500" class="pa-5">
+        <v-card max-width="600" class="pa-5">
           <v-card-title>{{currentArticle.title}}</v-card-title>
           <v-card-text>
             <v-row>
