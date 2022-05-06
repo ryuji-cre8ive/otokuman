@@ -13,9 +13,15 @@ export default defineComponent({
     let dialog = ref(false)
     let choiceGenreItem = ref("")
     let isHome = ref(false)
+    let drawer = ref(false)
     const title = ref("")
     const content = ref("")
     const genre = ref("")
+    const links = [{
+      title: "ログアウト",
+      link: '/logout',
+      icon: 'mdi-logout'
+    }]
 
     let myInfo = computed(() => store.state)
 
@@ -52,6 +58,12 @@ export default defineComponent({
       createUser: string,
     }
 
+    interface User {
+      id: string,
+      name: string,
+      password: string
+    }
+
     const makeArticle = () => {
 
       const article:Article = {
@@ -67,6 +79,20 @@ export default defineComponent({
       axios.post('/api/addArticle', article).then(res => {
         alert(res.data.message)
         location.reload()
+      })
+    }
+
+    const logout = () => {
+      const logoutParam:User = {
+        id: myInfo.value.id,
+        name: myInfo.value.name,
+        password: myInfo.value.password
+      }
+      axios.post('/api/logout', logoutParam).then(res => {
+        alert(res.data)
+        return location.href = "/"
+      }).catch(err => {
+        alert(err)
       })
     }
 
@@ -94,7 +120,10 @@ export default defineComponent({
       makeArticle,
       title,
       content,
-      genre
+      genre,
+      drawer,
+      links,
+      logout,
     }
   },
 })
@@ -102,14 +131,35 @@ export default defineComponent({
 
 
 <template>
+<v-navigation-drawer
+  v-model="drawer"
+  temporary
+  class="d-none d-md-flex"
+  >
+    <v-list-item
+      prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
+      :title="myInfo.name"
+    ></v-list-item>  
+
+      <v-divider></v-divider>
+      <v-list density="compact" nav>
+        <v-list-item prepend-icon="mdi-view-dashboard" title="ホーム" value="home" @click="goHomeWithLogin" class="py-3"></v-list-item>
+        <v-list-item prepend-icon="mdi-forum" title="Otokumanについて" value="about" @click="goAbout" class="py-3"></v-list-item>
+        <v-list-item prepend-icon="mdi-comment-text" title="新着情報" value="news" @click="goNews" class="py-3"></v-list-item>
+        <v-list-item prepend-icon="mdi-login" title="マイページ" value="mypage" @click="goMypage(myInfo.id)" class="py-3"></v-list-item>
+        <v-list-item prepend-icon="mdi-file-document-multiple-outline" title="記事を書く" value="mypage" @click="dialog = !dialog" class="py-3"></v-list-item>
+        <v-divider></v-divider>
+        <v-btn color="error" class="ma-6" @click="logout">ログアウトする</v-btn>
+      </v-list>
+    </v-navigation-drawer>
   <v-app-bar
     color="yellow"
     dense
     app
   >
-    <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title color="white" class="pl-4">OTOKU-MAN</v-toolbar-title>
+  
+    <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-toolbar-title color="white" class="pl-4 d-none d-sm-flex">OTOKU-MAN</v-toolbar-title>
 
       <v-spacer></v-spacer>
       <div class="px-10 d-sm-flex">

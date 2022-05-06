@@ -18,6 +18,8 @@ func Init() *echo.Echo {
 	api.POST("/addArticle", con.AddArticle, midd.ReadCookieMiddleware)
 	api.GET("/getUserDataWithCookie", con.GetUserDataWithCookieHandler)
 	api.GET("/getArticles", con.GetArticles)
+	api.POST("/logout", con.Logout)
+	api.GET("/getMyArticle", con.GetArticlesWrittenByMe)
 
 	return e
 }

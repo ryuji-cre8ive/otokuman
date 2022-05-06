@@ -66,6 +66,41 @@ func Login (c echo.Context) error {
 	return c.JSON(http.StatusOK, paramsAfterLogin)
 }
 
+func Logout (c echo.Context) error {
+
+	// dbからセッション情報を削除する
+	db, err := SqlConnect()
+	if err != nil {
+		println(err)
+	}
+
+	var userBefore Users
+
+	param := new(types.User)
+	if err := c.Bind(param); err != nil {
+		println(err)
+	}
+
+	userBefore.Id = param.Id
+	userAfter := userBefore
+
+	db.First(&userAfter)
+	userAfter.Session = ""
+	db.Model(&userBefore).Update(&userAfter)
+	db.Save(&userAfter)
+
+	// クッキーに保存されているセッション情報を削除する
+	cookie, err := c.Cookie("session")
+		if err != nil {
+			return err
+	}
+	cookie.MaxAge = -1
+	c.SetCookie(cookie)
+
+	return c.String(http.StatusOK, "you logout")
+
+}
+
 
 func AddUser (c echo.Context) error {
 	param := new(types.User)
