@@ -51,7 +51,7 @@ export default defineComponent({
 <template>
     
     <v-main class="ma-5">
-      <v-card width="600"  class="ma-auto">
+      <v-card max-width="600"  class="ma-auto">
         <v-card-title class="pt-10">
           <h1 class="display-1">ログイン</h1>
         </v-card-title>

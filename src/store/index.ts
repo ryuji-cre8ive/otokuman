@@ -42,7 +42,6 @@ export const store = createStore<User>({
         state.name = user.name
         state.password = user.password
       })
-
     }
   },
   actions: {

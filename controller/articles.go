@@ -63,3 +63,26 @@ func AddArticle (c echo.Context) error {
 	
 	return c.JSON(http.StatusOK, res)
 }
+
+func GetArticlesWrittenByMe (c echo.Context) error {
+	cookie, err := c.Cookie("session")
+		if err != nil {
+			return err
+	}
+	db, error := SqlConnect()
+	if error != nil {
+		return err
+	}
+	articles := []types.Articles{}
+	var user types.Users
+	db.First(&user, "session = ?", cookie.Value)
+
+	fmt.Println("userId" + user.Id)
+
+	db.Where("create_user = ?", user.Id).Find(&articles)
+
+	fmt.Println(articles)
+
+	return c.JSON(http.StatusOK, articles)
+
+}
