@@ -3,9 +3,15 @@ import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue'
 import axios from 'axios'
 import { useStore } from '@/store/index'
 import { useRoute, useRouter } from 'vue-router'
+import ArticleCard from './ArticleCard.vue'
+import DialogForArticleCard from './DialogForArticleCard.vue'
 
 export default defineComponent({
-  setup() {
+  components: {
+    ArticleCard,
+    DialogForArticleCard
+  },
+  setup(props, context) {
     const route = useRoute()
     const router = useRouter()
     const store = useStore()
@@ -47,28 +53,17 @@ export default defineComponent({
       })
     })
 
-    
-
-    // const makeArticle = () => {
-
-    //   const article:Article = {
-    //     title: title.value,
-    //     content: content.value,
-    //     genre: genre.value,
-    //     createUser: myInfo.value.id
-    //   }
-
-
-    //   axios.post('/api/addArticle', article).then(res => {
-    //     alert(res.data.message)
-    //     location.reload()
-    //   })
-    // }
-
     const onClickMore = (article: Article) => {
       currentArticle.value = article
       dialog.value = true
+      console.log(currentArticle)
     }
+
+    const makeDialogFalse = () => {
+      dialog.value = false
+    }
+
+    
 
     return { 
       otokuList,
@@ -79,7 +74,8 @@ export default defineComponent({
       isSetCookie,
       dialog,
       onClickMore,
-      currentArticle
+      currentArticle,
+      makeDialogFalse
     }
   },
 })
@@ -97,54 +93,11 @@ export default defineComponent({
           cols="12"
           sm="4"
         >
-          <v-card
-            class="mx-auto"
-            max-width="344"
-          >
-            <v-card-text>
-              
-              <p class="text-h4 text--primary">
-                {{list.title}}
-              </p>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn
-                variant="text"
-                color="teal-accent-4"
-                @click.stop="onClickMore(list)"
-              >
-                Learn More
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <ArticleCard :list="list" @onClickMore="onClickMore"/>
         </v-col>
       </v-row>
-      <v-dialog 
-        v-model="dialog"
-        v-if="currentArticle"
-        max-width="600px"
-      >
-        <v-card max-width="600" class="pa-5">
-          <v-card-title>{{currentArticle.title}}</v-card-title>
-          <v-card-text>
-            <v-row>
-              {{currentArticle.content}}
-            </v-row>
-            
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="dialog = false" color="error">
-              Close
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-chip>
-              {{currentArticle.createdAt}}
-              <v-icon>mdi-calendar-month</v-icon>
-            </v-chip>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <DialogForArticleCard v-if="currentArticle" :dialog="dialog" :currentArticle="currentArticle" @makeDialogFalse="makeDialogFalse"/>
+
     </div>
 
     
@@ -167,4 +120,10 @@ export default defineComponent({
   position: absolute;
   width: 100%;
 }
+
+.text-card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+} 
 </style>

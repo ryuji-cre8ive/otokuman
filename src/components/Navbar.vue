@@ -46,6 +46,10 @@ export default defineComponent({
       router.push('/home')
     }
 
+    const goConfig = (id:string) => {
+      router.push('/config/' + id)
+    }
+
     const choiceGenre = (genre: string) => {
       choiceGenreItem.value = genre
       console.log(choiceGenreItem.value)
@@ -124,6 +128,7 @@ export default defineComponent({
       drawer,
       links,
       logout,
+      goConfig
     }
   },
 })
@@ -139,15 +144,16 @@ export default defineComponent({
     <v-list-item
       prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
       :title="myInfo.name"
-    ></v-list-item>  
+    ></v-list-item>
 
       <v-divider></v-divider>
       <v-list density="compact" nav>
         <v-list-item prepend-icon="mdi-view-dashboard" title="ホーム" value="home" @click="goHomeWithLogin" class="py-3"></v-list-item>
-        <v-list-item prepend-icon="mdi-forum" title="Otokumanについて" value="about" @click="goAbout" class="py-3"></v-list-item>
+        <v-list-item prepend-icon="mdi-check-bold" title="Otokumanについて" value="about" @click="goAbout" class="py-3"></v-list-item>
         <v-list-item prepend-icon="mdi-comment-text" title="新着情報" value="news" @click="goNews" class="py-3"></v-list-item>
         <v-list-item prepend-icon="mdi-login" title="マイページ" value="mypage" @click="goMypage(myInfo.id)" class="py-3"></v-list-item>
         <v-list-item prepend-icon="mdi-file-document-multiple-outline" title="記事を書く" value="mypage" @click="dialog = !dialog" class="py-3"></v-list-item>
+        <v-list-item prepend-icon="mdi-cog" title="設定" value="config" @click="goConfig(myInfo.id)" class="py-3"></v-list-item>
         <v-divider></v-divider>
         <v-btn color="error" class="ma-6" @click="logout">ログアウトする</v-btn>
       </v-list>
