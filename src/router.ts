@@ -1,6 +1,7 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 import axios from 'axios'
 import { createRouter,createWebHistory } from 'vue-router';
+import TopPage from './components/Index.vue'
 import Hello from './components/HelloWorld.vue'
 import Login from './components/Login.vue'
 import Add from './components/Add.vue'
@@ -10,8 +11,8 @@ import Home from './components/Home.vue'
 const routes = [
     {
       path: '/',
-      name: 'hello',
-      component: Hello
+      name: 'TopPage',
+      component: TopPage
     },
     {
       path: '/login',
