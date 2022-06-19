@@ -13,6 +13,7 @@ func Init() *echo.Echo {
 
 	// api.Use()
 	api.GET("/checkCookie",midd.CheckCookieForRouter)
+	api.POST("/sendmail", con.Sendmail)
 	api.POST("/adduser", con.AddUser)
 	api.POST("/login", con.Login)
 	api.POST("/addArticle", con.AddArticle, midd.ReadCookieMiddleware)

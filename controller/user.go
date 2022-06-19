@@ -8,6 +8,11 @@ import (
 	"net/http"
 	"time"
 	. "fmt"
+	"golang.org/x/oauth2"
+  "golang.org/x/oauth2/google"
+	"google.golang.org/api/gmail/v1"
+	"encoding/base64"
+	"strings"
 )
 
 type Users struct {
@@ -66,8 +71,9 @@ func Login (c echo.Context) error {
 	return c.JSON(http.StatusOK, paramsAfterLogin)
 }
 
-func Logout (c echo.Context) error {
 
+
+func Logout (c echo.Context) error {
 	// dbからセッション情報を削除する
 	db, err := SqlConnect()
 	if err != nil {
@@ -98,7 +104,64 @@ func Logout (c echo.Context) error {
 	c.SetCookie(cookie)
 
 	return c.String(http.StatusOK, "you logout")
+}
 
+
+
+//メールを送信するミドルウェア
+func Sendmail (c echo.Context) error {
+	type Email struct{
+		Mail string
+	}
+
+	param := new(Email)
+	if err := c.Bind(param); err != nil {
+		println(err)
+	}
+
+	mail := param.Mail
+	
+	config := oauth2.Config {
+		ClientID: "474021763751-db0s6kjc0u3arg67t6k4jo6m38pv923a.apps.googleusercontent.com",
+		ClientSecret: "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",
+		Endpoint: google.Endpoint,
+		RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
+		Scopes:       []string{"https://mail.google.com/"},
+	}
+	expiry, _ := time.Parse("2006-01-02", "2017-07-11")
+
+	token := oauth2.Token{
+		AccessToken: "https://oauth2.googleapis.com/token",
+		TokenType: "Bearer",
+		RefreshToken: "https://www.googleapis.com/oauth2/v1/certs",
+		Expiry: expiry,
+	}
+
+	client := config.Client(oauth2.NoContext, &token)
+
+	srv, err := gmail.New(client)
+	if err != nil {
+		Printf("Unable to retrieve gmail Client %v", err)
+	}
+
+	template:= []byte("From: 'me'\r\n" + 
+		"reply-to: otokuman.jp@gmail.com\r\n" + 
+		"To: " + mail +"\r\n" +
+		"Subject: Test\r\n" + 
+		"\r\n" + "TestBody")
+	
+		var message gmail.Message
+		message.Raw = base64.StdEncoding.EncodeToString(template)
+		message.Raw = strings.Replace(message.Raw, "/", "_", -1)
+		message.Raw = strings.Replace(message.Raw, "+", "-", -1)
+		message.Raw = strings.Replace(message.Raw, "=", "", -1)
+
+		_, err = srv.Users.Messages.Send("me", &message).Do()
+		if err != nil {
+			Printf("%v", err)
+		}
+
+		return c.JSON(http.StatusOK, "the system sent email for you")
 }
 
 
@@ -143,7 +206,7 @@ func AddUser (c echo.Context) error {
 		println("success to add user")
 	}
 	
-	return c.JSON(http.StatusOK, param)
+	return c.JSON(http.StatusOK, "you are registered the system")
 }
 
 func GetUserDataWithCookieHandler (c echo.Context) error {

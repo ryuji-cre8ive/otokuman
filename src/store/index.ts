@@ -5,7 +5,8 @@ import { createStore, useStore as baseUseStore, Store } from "vuex";
 export interface User {
   id: string,
   name: string,
-  password: string
+  password: string,
+  img?: string
 }
 
 // export interface State {
@@ -20,7 +21,8 @@ export const store = createStore<User>({
   state: {
     id: '',
     name: '',
-    password: ''
+    password: '',
+    img: '',
   },
   getters: {
     getMyProfile: (state) => {
@@ -33,6 +35,7 @@ export const store = createStore<User>({
       state.id = user.Id
       state.name = user.name
       state.password = user.password
+      state.img = user.img
     },
     loginWithCookie(state) {
       axios.get('/api/getUserDataWithCookie').then(res => {
@@ -41,6 +44,7 @@ export const store = createStore<User>({
         state.id = user.Id
         state.name = user.name
         state.password = user.password
+        state.img = user.img
       })
     }
   },
