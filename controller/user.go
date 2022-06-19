@@ -122,8 +122,8 @@ func Sendmail (c echo.Context) error {
 	mail := param.Mail
 	
 	config := oauth2.Config {
-		ClientID: "474021763751-db0s6kjc0u3arg67t6k4jo6m38pv923a.apps.googleusercontent.com",
-		ClientSecret: "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",
+		ClientID: "",
+		ClientSecret: "",
 		Endpoint: google.Endpoint,
 		RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
 		Scopes:       []string{"https://mail.google.com/"},
@@ -131,9 +131,9 @@ func Sendmail (c echo.Context) error {
 	expiry, _ := time.Parse("2006-01-02", "2017-07-11")
 
 	token := oauth2.Token{
-		AccessToken: "https://oauth2.googleapis.com/token",
+		AccessToken: "",
 		TokenType: "Bearer",
-		RefreshToken: "https://www.googleapis.com/oauth2/v1/certs",
+		RefreshToken: "",
 		Expiry: expiry,
 	}
 
