@@ -50,10 +50,10 @@ export default defineComponent({
       router.push('/config/' + id)
     }
 
-    const choiceGenre = (genre: string) => {
-      choiceGenreItem.value = genre
-      console.log(choiceGenreItem.value)
-    }
+    // const choiceGenre = (genre: string) => {
+    //   choiceGenreItem.value = genre
+    //   console.log(choiceGenreItem.value)
+    // }
 
     interface Article {
       title: string,
@@ -73,7 +73,7 @@ export default defineComponent({
       const article:Article = {
         title: title.value,
         content: content.value,
-        genre: choiceGenreItem.value,
+        genre: genre.value,
         createUser: myInfo.value.id
       }
 
@@ -119,7 +119,7 @@ export default defineComponent({
       goHomeWithLogin,
       items,
       dialog,
-      choiceGenre,
+      // choiceGenre,
       isHome,
       makeArticle,
       title,
@@ -210,7 +210,7 @@ export default defineComponent({
           </v-btn>
         <v-dialog v-if="dialog" v-model="dialog" persistent max-width="600px">
           
-          <v-card max-width="600px">
+          <v-card max-width="700px">
             <v-container>
               <v-row jsutify="space-around">
                 <v-col cols="12" sm="5">
@@ -219,20 +219,10 @@ export default defineComponent({
                 <v-col>
                   <v-spacer></v-spacer>
                 </v-col>
-                <v-col cols="12" sm="3" class="ma-2">
-                    <v-menu offset-y>
-                      <template v-slot:activator="{ props }">
-                        <v-btn v-bind="props">
-                          Genre
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item v-for="(item, index) in items" :key="index" :value="item" active-color="primary">
-                          <v-list-item-title @click="choiceGenre(item)" v-model="genre">{{item}}</v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </v-col>
+                <v-col cols="12" sm="7" class="ma-2">
+                  <v-select v-model="genre" :items="items" label="ジャンル">
+                  </v-select>
+                </v-col>
               </v-row>
             </v-container>
             <v-card-text>

@@ -82,6 +82,12 @@ export default defineComponent({
           </v-col>
           
         </v-row>
+        <v-row>
+          <v-col>
+            <router-link to="/newuser">新規会員登録はこちら</router-link>
+          </v-col>
+          
+        </v-row>
         
       </div>
     </v-main>
