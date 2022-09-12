@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue'
-import axios from 'axios'
+import axios, {AxiosResponse} from 'axios'
 import { useStore } from '@/store/index'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from './ArticleCard.vue'
 import DialogForArticleCard from './DialogForArticleCard.vue'
+import {checkCookie} from './CheckCookie'
 
 export default defineComponent({
   components: {
@@ -33,14 +34,13 @@ export default defineComponent({
     const myInfo = computed(() => store.state)
     let dialog = ref(false)
     let currentArticle = ref<Article>()
+    const res = ref<AxiosResponse>()
 
-    onMounted(() => {
-      axios.get('/api/checkCookie').then(() => {
-        isSetCookie.value = true
-      }).catch((err) => {
-        console.log(isSetCookie)
-        console.error(err)
-      })
+    onMounted(async () => {
+      const response: AxiosResponse = await checkCookie()
+      console.log("status", response)
+      // console.log('msg', message)
+      res.value = response
 
       if (myInfo.value.id == '') {
         store.dispatch('loginWithCookie')
@@ -75,14 +75,15 @@ export default defineComponent({
       dialog,
       onClickMore,
       currentArticle,
-      makeDialogFalse
+      makeDialogFalse,
+      res,
     }
   },
 })
 </script>
 <template>
 <v-app>
-  <div v-if="isSetCookie">
+  <div v-if="res?.status === 200">
     <div align=center class="pt-10">
       <h2>お得な情報一覧</h2>
       <v-row dense class="pt-10">

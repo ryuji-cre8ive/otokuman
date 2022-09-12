@@ -8,6 +8,7 @@ export default defineComponent({
       name: string
       password: string
     }
+    const isSetCookie = ref(false)
     const valid = ref(true)
     const email = ref('')
     const password = ref('')
@@ -21,6 +22,24 @@ export default defineComponent({
         name: email.value,
         password: password.value
       }
+      onMounted(() => {
+      axios.get('/api/checkCookie').then(() => {
+        isSetCookie.value = true
+      }).catch((err) => {
+        return
+      })
+      axios.get('/api/getMyArticle').then((res) => {
+        console.log(res.data)
+        articleWrittenByMe.value = res.data
+        console.log(articleWrittenByMe)
+      }).catch((err) => {
+        console.error(err)
+      })
+
+      if (myInfo.value.id == "") {
+        store.dispatch('loginWithCookie')
+      }
+    })
       loading.value = true
       axios.post('/api/adduser', params).then(res => {
         loading.value = false
@@ -30,9 +49,6 @@ export default defineComponent({
         alert(err)
       })
     }
-
-    
-
     return {
       valid,
       email,

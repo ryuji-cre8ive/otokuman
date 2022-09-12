@@ -28,7 +28,7 @@ func CheckCookieForRouter ( c echo.Context ) error {
 	Println("cookieValue "+cookie.Value)
 
 	if len(cookie.Value) > 0 {
-		return c.String(200, "Cookie is already set")
+		return c.String(200, "既にログインしてます")
 	}
-	return c.String(401, "Cookie does not set")
+	return c.String(401, "ログインをやり直してください")
 }
