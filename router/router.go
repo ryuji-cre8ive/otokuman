@@ -21,6 +21,7 @@ func Init() *echo.Echo {
 	api.GET("/getArticles", con.GetArticles)
 	api.POST("/logout", con.Logout)
 	api.GET("/getMyArticle", con.GetArticlesWrittenByMe)
+	api.POST("/uploadProfileImage", con.UploadProfileImage)
 
 	return e
 }

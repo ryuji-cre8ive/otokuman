@@ -220,9 +220,7 @@ func GetUserDataWithCookieHandler (c echo.Context) error {
 		return err
 	}
 
-
 	var user Users
-
 	session := cookie.Value
 
 	db.Where(&user, "session = ?", session).First(&user)
@@ -274,4 +272,8 @@ func GetUserDataWithCookie(c echo.Context) (types.Users) {
 	}
 
 	return paramsAfterLoginWithCookie
+}
+
+func UploadProfileImage(c echo.Context) error {
+	return c.JSON(http.StatusOK, "hi")
 }

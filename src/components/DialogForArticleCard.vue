@@ -2,6 +2,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
+  name: 'dialog-for-article-card',
   props: {
     dialog: Boolean,
     currentArticle: Object,

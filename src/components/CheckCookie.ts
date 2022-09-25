@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from 'axios'
 // interface Response {status: number, message: string}
 
 // let res:Response
-export const checkCookie = async (x?: any) => {
+export const checkCookie = async (x?: any) =>  {
   try {
     const res = await axios.get('/api/checkCookie')
     return res

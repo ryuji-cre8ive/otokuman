@@ -2,6 +2,7 @@
 import { defineComponent, computed, ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useStore } from '@/store/index'
+import {checkCookie} from './CheckCookie'
 
 export default defineComponent({
   setup() {
@@ -11,6 +12,22 @@ export default defineComponent({
     const newPhoto = ref("")
     myInitial.value = myInfo.value.img ? myInfo.value.img : myInfo.value.name.substring(0,1)
     const isSetCookie = ref(false)
+    const newImage = ref('')
+
+    const uploadNewProfileImage = () => {
+      var formData = new FormData()
+      formData.append('image', newImage.value)
+      const config = {
+        header: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+      axios.post('/api/uploadProfileImage', formData, config).then((response) => {
+        if (response.ok) {
+          myInfo.img = newImage.value
+        }
+      })
+    }
     const links = [
     {
       title: "hi",
@@ -26,13 +43,12 @@ export default defineComponent({
     },
     ]
 
-    onMounted(() => {
-      axios.get('/api/checkCookie').then(() => {
+    onMounted(async () => {
+      const response = await checkCookie()
+      console.log("response",response)
+      if (response.status === 200) {
         isSetCookie.value = true
-      }).catch((err) => {
-        console.log(isSetCookie)
-        console.error(err)
-      })
+      }
       if (myInfo.value.id == '') {
         store.dispatch('loginWithCookie')
       }
@@ -42,6 +58,8 @@ export default defineComponent({
             links,
             myInitial,
             newPhoto,
+            newImage,
+            uploadNewProfileImage
           }
     
   },
@@ -49,16 +67,21 @@ export default defineComponent({
 </script>
 
 <template>
-  <v-card>
+  <div class="text-center justify-center">
+  <h2>ユーザー設定</h2>
+  <v-card width="500" height="800" class="text-center justify-center">
     <v-card-title>Profile</v-card-title>
     <v-card-text>
       <v-avatar size="36px">
-        <v-img :src="myInfo.img" v-if="myInfo.img"></v-img>
-        <v-icon v-if="!myInfo.img">{{myInitial}}</v-icon>
+        <v-img  :src="myInfo.img ? myInfo.img : '../assets/logo.png'"></v-img>
       </v-avatar>
       <p>プロフィール画像の更新</p>
-      <v-file-input></v-file-input>
+      <v-file-input v-model="newImage" class="mx-10"></v-file-input>
     </v-card-text>
+    <v-divider></v-divider>
+    <v-card-actions>
+      <v-btn @click="uploadNewProfileImage" color="secondary">更新する</v-btn>
+    </v-card-actions>
   </v-card>
-  
+</div>
 </template>
