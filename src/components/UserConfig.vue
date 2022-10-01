@@ -14,19 +14,25 @@ export default defineComponent({
     const isSetCookie = ref(false)
     const newImage = ref('')
 
-    const uploadNewProfileImage = () => {
+    const uploadNewProfileImage = async () => {
       var formData = new FormData()
       formData.append('image', newImage.value)
-      const config = {
-        header: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-      axios.post('/api/uploadProfileImage', formData, config).then((response) => {
+      try {
+        await axios.post('/api/uploadProfileImage', formData).then((response) => {
+        alert(response.data)
         if (response.ok) {
           myInfo.img = newImage.value
         }
       })
+      } catch(err) {
+        console.error(err)
+      }
+      
+    }
+
+    const registerNewImage = (e: any): void=> {
+      e.preventDefault()
+      newImage.value = e.target.files[0]
     }
     const links = [
     {
@@ -59,7 +65,8 @@ export default defineComponent({
             myInitial,
             newPhoto,
             newImage,
-            uploadNewProfileImage
+            uploadNewProfileImage,
+            registerNewImage,
           }
     
   },
@@ -73,10 +80,15 @@ export default defineComponent({
     <v-card-title>Profile</v-card-title>
     <v-card-text>
       <v-avatar size="36px">
-        <v-img  :src="myInfo.img ? myInfo.img : '../assets/logo.png'"></v-img>
+        <v-img  :src="myInfo.img ? myInfo.img : ''"></v-img>
       </v-avatar>
       <p>プロフィール画像の更新</p>
-      <v-file-input v-model="newImage" class="mx-10"></v-file-input>
+      <v-file-input
+        accept="image/*"
+        label="File input"
+        @change="registerNewImage"
+        :clearable=true
+      ></v-file-input>
     </v-card-text>
     <v-divider></v-divider>
     <v-card-actions>

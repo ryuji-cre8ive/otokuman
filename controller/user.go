@@ -13,6 +13,8 @@ import (
 	"google.golang.org/api/gmail/v1"
 	"encoding/base64"
 	"strings"
+	// "os"
+	// "io"
 )
 
 type Users struct {
@@ -275,5 +277,28 @@ func GetUserDataWithCookie(c echo.Context) (types.Users) {
 }
 
 func UploadProfileImage(c echo.Context) error {
-	return c.JSON(http.StatusOK, "hi")
+	// file, err := c.FormFile("file")
+	// if err != nil {
+	// 	return err
+	// }
+	// src, err := file.Open()
+	// if err != nil {
+	// 	return err
+	// }
+	// defer src.Close()
+
+	// fileModel := strings.Split(file.Filename, ".")
+	// fileName := fileModel[0]
+	// extension := fileModel[1]
+	// dst, err := os.Create(Sprintf("%s_out.%s", fileName, extension))
+	// if err != nil {
+	// 	return err
+	// }
+	// defer dst.Close()
+
+	// if _, err = io.Copy(dst, src); err != nil {
+	// 	return err
+	// }
+	// return c.JSON(http.StatusOK, "hello")
+	return c.JSON(http.StatusOK, "hihihi")
 }

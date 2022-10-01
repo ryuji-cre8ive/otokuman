@@ -44,7 +44,7 @@ export const store = createStore<User>({
         state.id = user.Id
         state.name = user.name
         state.password = user.password
-        state.img = user.img
+        state.img = user.img ? user.img : undefined
       })
     }
   },

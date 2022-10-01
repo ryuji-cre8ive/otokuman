@@ -59,7 +59,6 @@ export default defineComponent({
           <v-form class="pt-7">
             <v-text-field label="メールアドレス" prepend-icon="mdi-account-circle" v-model="name" />
             <v-text-field :type="showPassword ? 'text' : 'password'" label="パスワード" prepend-icon="mdi-lock" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" v-model="password" @click:append="showPassword = !showPassword" />
-            
           </v-form>
         </v-card-text>
         <v-divider></v-divider>
@@ -67,28 +66,12 @@ export default defineComponent({
           <v-btn color="success" @click="login">ログイン</v-btn>
         </v-card-actions>
       </v-card>
-
-
       <div align="center">
-        <v-row >
-          <v-col>
-             <router-link to="/forgotMail">メールアドレスをお忘れの方へ</router-link>
-          </v-col>
-         
-        </v-row>
-        <v-row>
-          <v-col>
-            <router-link to="/forgotPassword">パスワードをお忘れの方へ</router-link>
-          </v-col>
-          
-        </v-row>
         <v-row>
           <v-col>
             <router-link to="/newuser">新規会員登録はこちら</router-link>
           </v-col>
-          
         </v-row>
-        
       </div>
     </v-main>
 </template>
